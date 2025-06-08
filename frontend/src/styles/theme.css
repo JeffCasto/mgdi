@@ -1,0 +1,16 @@
+:root {
+  --primary: #0066CC;
+  --surface: #1A1A1A;
+  --surface-elevated: #2A2A2A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #B0B0B0;
+  --accent: #00D4FF;
+  --error: #FF4444;
+  --success: #00C853;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: var(--surface);
+  color: var(--text-primary);
+}

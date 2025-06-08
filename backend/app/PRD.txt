@@ -1,0 +1,126 @@
+# Product Requirements Document (PRD)
+
+**Product Name:** Multimodal GPT Dev Interface (MGDI)
+**Authors:** Jeff (PO) & Iris (PM/Tech Lead)
+**Date:** 17 Apr 2025
+**Revision:** v0.1 — _Draft for review_
+
+---
+
+## 1. Purpose & Vision
+MGDI empowers power‑users and software engineers with a secure, local‑first, fully‑extensible interface to state‑of‑the‑art LLMs. It unifies text, vision, audio, and code interpretation under one hacker‑modern roof, turning multimodal AI into a programmable tool‑chest rather than a black‑box chat toy.
+
+## 2. Goals & Success Metrics
+| Goal | Metric | Target |
+| --- | --- | --- |
+| Zero data‑leak architecture | External telemetry events | 0 events / month |
+| Multimodal parity with GPT‑4o API | Supported modalities vs API | 100 % within 4 weeks of new modality launch |
+| Developer productivity uplift | Tasks automated per user | ≥ 3 repeatable workflows saved per week |
+| Extensibility | Third‑party plugins installed | ≥ 10 plugins published in first 3 months |
+
+## 3. Target Users & Personas
+* **Full‑Stack Developer (Freddy):** needs rapid prototyping and code refactors.
+* **AI Researcher (Rachel):** experiments with chaining different models and modalities.
+* **Security‑Conscious Engineer (Sam):** demands local execution and auditability.
+* **Automation Tinkerer (Tina):** builds custom voice or image pipelines for side projects.
+
+## 4. Key Use Cases
+1. Screenshot messy legacy code → Vision OCR → GPT‑refactor → Generate Git patch.
+2. Voice memo → Whisper STT → Summarize → Create calendar events/tasks.
+3. Drag‑and‑drop DAG composer to chain models: image → caption → sentiment → email.
+4. Run local LLaMA for offline inference; fall back to GPT‑4o when online.
+
+## 5. Functional Requirements (F‑R)
+### 5.1 Multimodal Core
+* **F‑R‑1** Support text, image, audio, and file inputs with streaming outputs.
+* **F‑R‑2** Provide function‑calling with user‑defined JSON schemas (v 0.2).
+* **F‑R‑3** Sandboxed Code Interpreter for Python snippets ≤ 30 s CPU time.
+
+### 5.2 Advanced Developer Toolkit
+* **F‑R‑4** System Prompt Editor w/ version control (Git‑style diff, revert).
+* **F‑R‑5** Live token counter with budgeting suggestions and auto‑shrink.
+* **F‑R‑6** Model Switcher UI listing latency, cost, and modality support in real‑time.
+
+### 5.3 Workflow Engine
+* **F‑R‑7** Visual builder to create, save, export JSON YAML pipelines.
+* **F‑R‑8** Embedded JS/Python hooks for pre/post‑processing.
+* **F‑R‑9** Workflow marketplace (optional, v 1.1).
+
+### 5.4 Privacy & Security
+* **F‑R‑10** Offline‑mode: all traffic stays local; no 3rd‑party calls.
+* **F‑R‑11** Encrypted config & credential storage (AES‑256‑GCM).
+* **F‑R‑12** OAuth2 or passphrase‑only auth with rate‑limited lockout.
+
+### 5.5 Extensibility & Plugins
+* **F‑R‑13** Plugin API exposes lifecycle hooks: `manifest.json`, init, sandbox.
+* **F‑R‑14** Hot‑reload plugins without app restart.
+
+### 5.6 UI/UX
+* **F‑R‑15** Chat‑first panel with inline images/audio players.
+* **F‑R‑16** Sidebar: memory timeline, tool history, DAG mini‑map.
+* **F‑R‑17** Theme switcher with Light, Dark, Solarized, Terminal Neon.
+
+## 6. Non‑Functional Requirements (NF‑R)
+* **NF‑R‑1 Performance:** ≤ 200 ms UI frame latency on mid‑range laptop.
+* **NF‑R‑2 Scalability:** Handle 10 concurrent workflows without UI lag.
+* **NF‑R‑3 Accessibility:** WCAG 2.1 AA compliance.
+* **NF‑R‑4 Internationalization:** UI strings externalized for i18n (v 1.2).
+* **NF‑R‑5 Test Coverage:** ≥ 80 % unit + integration.
+
+## 7. Technical Architecture
+* **Frontend:** React + Tailwind, Zustand state, Vite build.
+* **Backend:** FastAPI service → Model Router → Provider SDKs (OpenAI, Anthropic, Local).
+* **Data Stores:** SQLite (settings), ChromaDB (vector mem), Redis (workflow cache).
+* **Containerization:** Docker + Compose; optional K8s helm chart.
+* **Networking:** Nginx reverse proxy, automatic LetsEncrypt certs.
+
+### 7.1 Sequence Diagram (high‑level)
+```mermaid
+client-->frontend: prompt + files
+frontend-->backend: JSON RPC
+backend-->modelRouter: orchestrate
+modelRouter-->provider: API call(s)
+provider-->backend: stream
+backend-->frontend: SSE stream
+frontend-->client: rendered chunks
+```
+
+## 8. Security & Compliance
+* Local‑first data path; if proxy, TLS 1.3 mandatory.
+* OWASP Top‑10 audit pre‑GA.
+* Supply‑chain scanning (Trivy, Snyk) in CI.
+
+## 9. Dependencies & Risks
+| Dependency | Risk | Mitigation |
+| --- | --- | --- |
+| OpenAI API quota limits | Rate‑limit or outage | Local fallback models |
+| Code Interpreter sandbox escape | Security breach | Run in Docker, seccomp, tight fs perms |
+| Browser STT not supported | Limited voice workflows | Optional 11 Labs or Whisper server |
+
+## 10. Roadmap & Milestones
+| Phase | Deliverables | ETA |
+| --- | --- | --- |
+| 0.1 Proof of Concept | Text chat, model switcher | May 2025 |
+| 0.2 Multimodal Alpha | Image & audio I/O | Jun 2025 |
+| 0.3 Workflow Builder Beta | Visual DAG, plugin API | Aug 2025 |
+| 1.0 GA | Security audit, docs, plugin marketplace | Oct 2025 |
+
+## 11. Out of Scope (v 1.0)
+* Mobile native apps (web PWA only).
+* Payment processing / SaaS hosting.
+* Automated dataset labeling workflows.
+
+## 12. Acceptance Criteria / DoD
+* All functional & non‑functional requirements met.
+* Full automated test suite passing.
+* Security audit score ≥ 90 %.
+* User docs & video walkthrough published.
+
+## 13. Open Questions
+1. Which vector DB (Chroma vs Weaviate) aligns best with local‑first deployments?
+2. Will Code Interpreter be GA in API by v 0.3 timeline?
+3. Should plugin marketplace be self‑hosted or GitHub‑backed?
+
+---
+_End of Document_
+
