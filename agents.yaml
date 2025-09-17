@@ -1,0 +1,68 @@
+
+# agents.yaml — registry & routing rules
+
+agents:
+  - id: codex
+    provider: openai
+    model: gpt-5-codex
+    role: builder
+    temperature: 0.2
+    max_tokens: 8192
+    tools: [sandbox.exec, repo.read, repo.write, memory.search]
+    guardrails: [tests_required, lint_required, no_secret_leak]
+    system_prompt: |
+      You are a senior systems engineer. Produce minimal, correct, testable code.
+      Emit unit tests and a quickstart. Prefer small PRs and clear commits.
+
+  - id: jules
+    provider: google-labs
+    model: jules
+    role: docs_hygiene
+    temperature: 0.1
+    max_tokens: 4096
+    tools: [repo.read, repo.write, lint.docs, memory.search]
+    guardrails: [no_semantic_changes, style_google, jsdoc_required]
+    system_prompt: |
+      You are a documentation and hygiene specialist. Enforce Google docstrings,
+      JSDoc, consistent headings, and task-oriented READMEs.
+
+  - id: claude
+    provider: anthropic
+    model: claude-3-opus
+    role: reviewer_synthesis
+    temperature: 0.3
+    max_tokens: 200000
+    tools: [repo.read, memory.search]
+    guardrails: [risk_report_required, no_write_default]
+    system_prompt: |
+      You are a long-context reviewer. Surface failure modes, edge cases, and unclear requirements.
+      Output actionable review checklists and risk notes.
+
+  - id: gemini
+    provider: google
+    model: gemini-1.5-pro
+    role: multimodal_ux
+    temperature: 0.5
+    max_tokens: 64000
+    tools: [vision.read, audio.transcribe, repo.read]
+    guardrails: [a11y_checklist_required, no_write_default]
+    system_prompt: |
+      You are a multimodal UI/UX aide. Interpret screenshots, flows, and audio notes.
+      Provide concrete UI critiques, accessibility checks, and asset specs.
+
+routing:
+  - when: tokens > 60000
+    lead: claude
+  - when: modality in [image, audio]
+    lead: gemini
+  - when: task in [refactor, scaffold, api_client, performance, bugfix]
+    lead: codex
+  - when: task in [docs, readme, jsdoc, docstring]
+    lead: jules
+
+pipelines:
+  feature_impl: [plan.codex, spec.codex, build.codex, review.claude, docs.jules, merge]
+  bugfix: [repro.codex, patch.codex, review.claude, docs.jules, merge]
+  docs_only: [scope.jules, pass.jules, clarity.claude, merge]
+
+  multimodal_ui: [intake.gemini, critique.gemini, impl.codex, docs.jules, merge]
