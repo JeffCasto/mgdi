@@ -7,6 +7,15 @@ interface MessageProps {
   message: ChatMessage;
 }
 
+/**
+ * A component to display a single message.
+ *
+ * This component displays the message content, sender, timestamp, and any
+ * attachments or metadata.
+ *
+ * @param message The message to display.
+ * @returns A component to display a single message.
+ */
 function Message({ message }: MessageProps) {
   const isUser = message.role === 'user';
   const isSystem = message.role === 'system';
@@ -116,6 +125,14 @@ function Message({ message }: MessageProps) {
   );
 }
 
+/**
+ * A component to display a list of messages.
+ *
+ * This component displays a list of messages, as well as a streaming message
+ * indicator and an error message if one exists.
+ *
+ * @returns A component to display a list of messages.
+ */
 export default function MessageList() {
   const { messages, currentStreamingMessage, isStreaming, error } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);

@@ -30,7 +30,19 @@ export interface Model {
   name: string;
 }
 
+/**
+ * A class for interacting with the API.
+ *
+ * This class provides methods for sending messages, getting providers and
+ * models, and checking the health of the API.
+ */
 class ApiService {
+  /**
+   * Sends a message to the API.
+   *
+   * @param request The chat request.
+   * @returns The chat response.
+   */
   async sendMessage(request: ChatRequest): Promise<ChatResponse> {
     const response = await fetch(`${API_BASE}/chat/`, {
       method: 'POST',
@@ -47,6 +59,12 @@ class ApiService {
     return response.json();
   }
 
+  /**
+   * Sends a message to the API and streams the response.
+   *
+   * @param request The chat request.
+   * @param onChunk A callback to handle each chunk of the response.
+   */
   async sendMessageStream(
     request: ChatRequest,
     onChunk: (chunk: string) => void
@@ -91,6 +109,11 @@ class ApiService {
     }
   }
 
+  /**
+   * Gets a list of available providers from the API.
+   *
+   * @returns A record of available providers.
+   */
   async getProviders(): Promise<Record<string, Provider>> {
     const response = await fetch(`${API_BASE}/chat/providers`);
     if (!response.ok) {
@@ -100,6 +123,11 @@ class ApiService {
     return data.providers;
   }
 
+  /**
+   * Gets a list of available models from the API.
+   *
+   * @returns A list of available models.
+   */
   async getModels(): Promise<Model[]> {
     const response = await fetch(`${API_BASE}/chat/models`);
     if (!response.ok) {
@@ -109,6 +137,11 @@ class ApiService {
     return data.models;
   }
 
+  /**
+   * Checks the health of the API.
+   *
+   * @returns An object with the health status and version of the API.
+   */
   async healthCheck(): Promise<{ status: string; version: string }> {
     const response = await fetch(`${API_BASE.replace('/api', '')}/health`);
     if (!response.ok) {

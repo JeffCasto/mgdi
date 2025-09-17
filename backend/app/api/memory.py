@@ -11,10 +11,25 @@ import json
 router = APIRouter()
 
 class MemoryRequest(BaseModel):
+    """Represents a request to store a memory.
+
+    Attributes:
+        content: The text content of the memory.
+        metadata: An optional dictionary of metadata for the memory.
+    """
     content: str
     metadata: Optional[dict] = None
 
 class MemoryResponse(BaseModel):
+    """Represents a memory returned from the API.
+
+    Attributes:
+        id: The unique ID of the memory.
+        content: The text content of the memory.
+        metadata: A dictionary of metadata for the memory.
+        created_at: The timestamp when the memory was created.
+        similarity: The similarity score of the memory to a search query.
+    """
     id: str
     content: str
     metadata: dict
@@ -27,7 +42,19 @@ async def store_memory(
     db: AsyncSession = Depends(get_db),
     user_id: str = "default"  # TODO: Extract from JWT
 ):
-    """Store memory with vector embedding"""
+    """Stores a memory with a vector embedding.
+
+    Args:
+        memory: The memory to store.
+        db: The database session.
+        user_id: The ID of the user who owns the memory.
+
+    Returns:
+        The stored memory.
+
+    Raises:
+        HTTPException: If the memory storage fails.
+    """
     try:
         # Generate embedding
         provider = OpenAIProvider()
@@ -62,7 +89,21 @@ async def search_memories(
     db: AsyncSession = Depends(get_db),
     user_id: str = "default"  # TODO: Extract from JWT
 ):
-    """Vector similarity search"""
+    """Performs a vector similarity search for memories.
+
+    Args:
+        query: The search query.
+        limit: The maximum number of memories to return.
+        threshold: The similarity threshold.
+        db: The database session.
+        user_id: The ID of the user who owns the memories.
+
+    Returns:
+        A list of memories that match the search query.
+
+    Raises:
+        HTTPException: If the memory search fails.
+    """
     try:
         # Generate query embedding
         provider = OpenAIProvider()
@@ -107,7 +148,19 @@ async def get_timeline(
     user_id: str = "default",  # TODO: Extract from JWT
     limit: int = 50
 ):
-    """Get chronological memory timeline"""
+    """Gets a chronological timeline of memories.
+
+    Args:
+        db: The database session.
+        user_id: The ID of the user who owns the memories.
+        limit: The maximum number of memories to return.
+
+    Returns:
+        A list of memories in reverse chronological order.
+
+    Raises:
+        HTTPException: If the timeline fetch fails.
+    """
     try:
         stmt = (
             select(MemoryEntry)

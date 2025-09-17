@@ -1,4 +1,10 @@
-// DOMPurify wrapper for input sanitization
+/**
+ * A wrapper for DOMPurify to sanitize HTML.
+ *
+ * @param html The HTML to sanitize.
+ * @returns The sanitized HTML.
+ */
 import DOMPurify from 'isomorphic-dompurify';
-export const sanitizeInput = (input: string) =>
-  DOMPurify.sanitize(input, { ALLOWED_TAGS: ['b', 'i', 'code', 'pre', 'a'], ALLOWED_ATTR: ['href', 'target'] });
+
+export const sanitizeHtml = (html: string) =>
+  DOMPurify.sanitize(html, { ALLOWED_TAGS: ['b', 'i', 'code', 'pre', 'a'], ALLOWED_ATTR: ['href', 'target'] });
