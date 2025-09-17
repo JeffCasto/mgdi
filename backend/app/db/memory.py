@@ -8,6 +8,16 @@ import uuid
 from datetime import datetime
 
 class MemoryEntry(Base):
+    """Represents a memory entry in the database.
+
+    Attributes:
+        id: The unique ID of the memory entry.
+        user_id: The ID of the user who owns the memory.
+        content: The text content of the memory.
+        embedding: The vector embedding of the memory content.
+        entry_metadata: A JSON string of metadata for the memory.
+        created_at: The timestamp when the memory was created.
+    """
     __tablename__ = "memory_entries"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

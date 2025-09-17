@@ -1,10 +1,15 @@
-// Types for chat messages and attachments
+/**
+ * An interface for an attachment.
+ */
 export interface Attachment {
   id: string;
   type: 'image' | 'audio' | 'file';
   url: string;
 }
 
+/**
+ * An interface for a chat message.
+ */
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';

@@ -9,6 +9,14 @@ interface Memory {
   similarity?: number;
 }
 
+/**
+ * A component to display a timeline of memories.
+ *
+ * This component fetches a timeline of memories from the API and displays
+ * them in a list.
+ *
+ * @returns A component to display a timeline of memories.
+ */
 export default function Timeline() {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [loading, setLoading] = useState(true);

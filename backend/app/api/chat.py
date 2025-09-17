@@ -23,10 +23,26 @@ except ValueError as e:
     logger.warning(f"Anthropic provider disabled: {e}")
 
 class ChatMessage(BaseModel):
+    """Represents a single message in a chat conversation.
+
+    Attributes:
+        role: The role of the message sender (e.g., 'user', 'assistant', 'system').
+        content: The text content of the message.
+    """
     role: str  # 'user', 'assistant', 'system'
     content: str
     
 class ChatRequest(BaseModel):
+    """Represents a request to the chat endpoint.
+
+    Attributes:
+        messages: A list of messages in the conversation.
+        model: The model to use for the chat.
+        max_tokens: The maximum number of tokens to generate.
+        temperature: The temperature for the generation.
+        provider: The provider to use for the chat (e.g., 'openai', 'anthropic').
+        stream: Whether to stream the response.
+    """
     messages: List[ChatMessage]
     model: str = config.DEFAULT_MODEL
     max_tokens: int = config.MAX_TOKENS
@@ -35,6 +51,14 @@ class ChatRequest(BaseModel):
     stream: bool = False
     
 class ChatResponse(BaseModel):
+    """Represents a response from the chat endpoint.
+
+    Attributes:
+        content: The content of the response.
+        model: The model used for the chat.
+        provider: The provider used for the chat.
+        metadata: A dictionary of metadata about the response.
+    """
     content: str
     model: str
     provider: str
@@ -42,8 +66,22 @@ class ChatResponse(BaseModel):
 
 @router.post("/", response_model=ChatResponse)
 async def chat_endpoint(req: ChatRequest):
-    """
-    Chat endpoint that processes messages with selected AI provider.
+    """Processes a chat request with the selected AI provider.
+
+    This endpoint takes a chat request, selects the appropriate provider,
+    and then generates a response. It supports both streaming and non-streaming
+    responses.
+
+    Args:
+        req: The chat request.
+
+    Returns:
+        A `ChatResponse` object with the generated content, or a
+        `StreamingResponse` if streaming is enabled.
+
+    Raises:
+        HTTPException: If the provider is not supported or if an error occurs
+            during chat processing.
     """
     provider_name = req.provider.lower()
     if provider_name not in PROVIDERS:
@@ -102,7 +140,11 @@ async def chat_endpoint(req: ChatRequest):
 
 @router.get("/providers")
 async def list_providers():
-    """List available chat model providers and their models."""
+    """Lists the available chat model providers and their models.
+
+    Returns:
+        A dictionary containing information about the available providers.
+    """
     provider_info = {}
     for name, provider in PROVIDERS.items():
         try:
@@ -120,7 +162,11 @@ async def list_providers():
 
 @router.get("/models")
 async def list_models():
-    """List all available models across providers."""
+    """Lists all available models across all providers.
+
+    Returns:
+        A dictionary containing a list of all available models.
+    """
     all_models = []
     for provider_name, provider in PROVIDERS.items():
         try:
