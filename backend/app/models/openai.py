@@ -5,7 +5,17 @@ from ..config import config
 from .base import BaseModelProvider
 
 class OpenAIProvider(BaseModelProvider):
+    """A provider for the OpenAI API.
+
+    This class provides methods for generating text, getting embeddings, and
+    getting available models from the OpenAI API.
+    """
     def __init__(self):
+        """Initializes the OpenAI provider.
+
+        Raises:
+            ValueError: If the OPENAI_API_KEY is not set.
+        """
         if not config.OPENAI_API_KEY:
             raise ValueError("OPENAI_API_KEY is required")
         self.client = openai.AsyncOpenAI(api_key=config.OPENAI_API_KEY)
@@ -19,7 +29,22 @@ class OpenAIProvider(BaseModelProvider):
         stream: bool = False,
         **kwargs
     ) -> str | AsyncGenerator[str, None]:
-        """Generate text using OpenAI API"""
+        """Generates text using the OpenAI API.
+
+        Args:
+            messages: A list of messages in the conversation.
+            model: The model to use for the chat.
+            max_tokens: The maximum number of tokens to generate.
+            temperature: The temperature for the generation.
+            stream: Whether to stream the response.
+            **kwargs: Additional keyword arguments to pass to the OpenAI API.
+
+        Returns:
+            The generated text, or an async generator of text chunks if streaming.
+
+        Raises:
+            Exception: If an error occurs with the OpenAI API.
+        """
         try:
             response = await self.client.chat.completions.create(
                 model=model,
@@ -31,26 +56,25 @@ class OpenAIProvider(BaseModelProvider):
             )
             
             if stream:
-                return self._stream_response(response)
+                return self._handle_stream(response)
             else:
                 return response.choices[0].message.content
                 
         except Exception as e:
             raise Exception(f"OpenAI API error: {str(e)}")
     
-    async def _stream_response(self, response) -> AsyncGenerator[str, None]:
-        """Stream response chunks"""
-        async for chunk in response:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-    
-    async def generate_stream(self, messages: List[Dict], **kwargs):
-        """Stream text generation"""
-        # TODO: Implement streaming for OpenAI
-        pass
-    
     async def get_embedding(self, text: str) -> List[float]:
-        """Generate text embedding for vector storage"""
+        """Generates a text embedding for vector storage.
+
+        Args:
+            text: The text to get an embedding for.
+
+        Returns:
+            A list of floats representing the embedding.
+
+        Raises:
+            Exception: If an error occurs with the OpenAI API.
+        """
         try:
             response = await self.client.embeddings.create(
                 model="text-embedding-ada-002",
@@ -61,7 +85,11 @@ class OpenAIProvider(BaseModelProvider):
             raise Exception(f"OpenAI embedding error: {str(e)}")
     
     def get_available_models(self) -> list[str]:
-        """Get list of available models"""
+        """Gets a list of available models from the OpenAI API.
+
+        Returns:
+            A list of available models.
+        """
         return [
             "gpt-4",
             "gpt-4-turbo", 

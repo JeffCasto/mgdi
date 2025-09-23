@@ -34,6 +34,11 @@ app.add_middleware(
 # Health check
 @app.get("/health")
 async def health_check():
+    """Returns the health status of the API.
+
+    Returns:
+        A dictionary with the health status and version of the API.
+    """
     return {"status": "healthy", "version": "0.1.0"}
 
 # API Routers
@@ -50,6 +55,11 @@ if os.path.exists("../frontend/dist"):
     
     @app.get("/")
     async def serve_frontend():
+        """Serves the frontend's index.html file.
+
+        Returns:
+            A `FileResponse` with the frontend's index.html file.
+        """
         return FileResponse("../frontend/dist/index.html")
 
 if __name__ == "__main__":

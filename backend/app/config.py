@@ -2,7 +2,10 @@ import os
 from typing import Optional
 
 class Config:
-    """Application configuration"""
+    """A class to hold the application's configuration.
+
+    The configuration is loaded from environment variables.
+    """
     
     # API Keys
     OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")

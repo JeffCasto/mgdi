@@ -3,6 +3,9 @@ import { persist } from 'zustand/middleware';
 import type { ChatMessage } from '../types/chat';
 import { api, type ChatRequest, type Model } from '../services/api';
 
+/**
+ * An interface for the chat settings.
+ */
 interface ChatSettings {
   provider: string;
   model: string;
@@ -11,6 +14,9 @@ interface ChatSettings {
   streamingEnabled: boolean;
 }
 
+/**
+ * An interface for the chat store.
+ */
 interface ChatStore {
   // Messages
   messages: ChatMessage[];

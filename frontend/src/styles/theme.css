@@ -14,3 +14,7 @@ body {
   background: var(--surface);
   color: var(--text-primary);
 }
+
+.container {
+  padding: 16px;
+}

@@ -1,6 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { useChatStore } from '../../stores/chatStore';
 
+/**
+ * A component for composing and sending messages.
+ *
+ * This component provides a textarea for typing messages, a button for
+ * attaching files, and a button for sending messages. It also displays
+ * previews of attached files.
+ *
+ * @returns A component for composing and sending messages.
+ */
 export default function MessageComposer() {
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -53,8 +62,7 @@ export default function MessageComposer() {
   const disabled = isLoading || isStreaming;
   
   return (
-    <div style={{
-      padding: '16px',
+    <div className="container" style={{
       borderTop: '1px solid var(--surface-elevated)',
       background: 'var(--surface)'
     }}>
