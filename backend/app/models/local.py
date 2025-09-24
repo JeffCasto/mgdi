@@ -1,13 +1,15 @@
 # Local model provider stub
 from .base import BaseModelProvider
 
-from typing import AsyncGenerator, Dict, Any
+from typing import AsyncGenerator, Dict
+
 
 class LocalProvider(BaseModelProvider):
     """A provider for local models.
 
     This is a stub for a local model provider.
     """
+
     async def generate(
         self,
         messages: list[Dict[str, str]],
@@ -30,7 +32,7 @@ class LocalProvider(BaseModelProvider):
         Returns:
             The generated text, or an async generator of text chunks if streaming.
         """
-        return 'Local model response'
+        return "Local model response"
 
     def get_available_models(self) -> list[str]:
         """Gets a list of available models for this provider.

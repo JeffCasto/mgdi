@@ -2,7 +2,8 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.post('/')
+
+@router.post("/")
 def workflow_endpoint():
     """Workflow endpoint.
 
@@ -11,4 +12,4 @@ def workflow_endpoint():
     Returns:
         A dictionary with a message indicating that the workflow endpoint was called.
     """
-    return {'message': 'Workflow endpoint'}
+    return {"message": "Workflow endpoint"}

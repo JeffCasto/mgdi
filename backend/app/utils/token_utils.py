@@ -3,6 +3,7 @@
 This is a stub for a module that will eventually be used to handle JWT tokens.
 """
 
+
 def create_token(user_id: str) -> str:
     """Creates a JWT token for a user.
 
@@ -13,6 +14,7 @@ def create_token(user_id: str) -> str:
         A JWT token.
     """
     return "stub_token"
+
 
 def verify_token(token: str) -> str:
     """Verifies a JWT token.

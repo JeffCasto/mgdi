@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { api } from '../../services/api';
+import React, { useEffect, useState } from "react";
+import { api } from "../../services/api";
 
 interface Memory {
   id: string;
   content: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_at: string;
   similarity?: number;
 }
@@ -29,17 +29,18 @@ export default function Timeline() {
   const loadTimeline = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/memory/timeline');
+      const response = await api.get("/memory/timeline");
       setMemories(response.data);
     } catch (err) {
-      setError('Failed to load timeline');
-      console.error('Timeline error:', err);
+      setError("Failed to load timeline");
+      console.error("Timeline error:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div className="timeline-loading">Loading memories...</div>;
+  if (loading)
+    return <div className="timeline-loading">Loading memories...</div>;
   if (error) return <div className="timeline-error">{error}</div>;
 
   return (
@@ -49,7 +50,7 @@ export default function Timeline() {
         <div className="timeline-empty">No memories yet</div>
       ) : (
         <div className="timeline-entries">
-          {memories.map(memory => (
+          {memories.map((memory) => (
             <div key={memory.id} className="timeline-entry">
               <div className="timeline-date">
                 {new Date(memory.created_at).toLocaleDateString()}
@@ -64,8 +65,8 @@ export default function Timeline() {
           ))}
         </div>
       )}
-      
-      <style jsx>{`
+
+      <style>{`
         .timeline {
           padding: 1rem;
           max-height: 400px;

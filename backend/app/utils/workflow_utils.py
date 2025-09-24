@@ -4,6 +4,7 @@ This is a stub for a module that will eventually be used to handle
 workflows.
 """
 
+
 def run_workflow(workflow_name: str, inputs: dict) -> dict:
     """Runs a workflow.
 

@@ -6,6 +6,7 @@ import threading
 
 router = APIRouter()
 
+
 # In-memory storage for system prompts (replace with persistent storage later)
 class SystemPrompt(BaseModel):
     """Represents a system prompt.
@@ -16,13 +17,16 @@ class SystemPrompt(BaseModel):
         content: The text content of the prompt.
         description: An optional description of the prompt.
     """
+
     id: int
     name: str
     content: str
     description: Optional[str] = None
 
+
 class SystemPromptStore:
     """A thread-safe, in-memory store for system prompts."""
+
     def __init__(self):
         """Initializes the system prompt store."""
         self._prompts = []
@@ -88,7 +92,9 @@ class SystemPromptStore:
         with self._lock:
             self._prompts = [p for p in self._prompts if p.id != prompt_id]
 
+
 prompt_store = SystemPromptStore()
+
 
 @router.get("/prompts", response_model=List[SystemPrompt])
 def list_prompts():
@@ -98,6 +104,7 @@ def list_prompts():
         A list of all system prompts.
     """
     return prompt_store.list_prompts()
+
 
 @router.get("/prompts/{prompt_id}", response_model=SystemPrompt)
 def get_prompt(prompt_id: int):
@@ -117,6 +124,7 @@ def get_prompt(prompt_id: int):
         raise HTTPException(status_code=404, detail="Prompt not found")
     return prompt
 
+
 @router.post("/prompts", response_model=SystemPrompt)
 def create_prompt(prompt: SystemPrompt):
     """Creates a new system prompt.
@@ -129,6 +137,7 @@ def create_prompt(prompt: SystemPrompt):
     """
     prompt_store.add_prompt(prompt)
     return prompt
+
 
 @router.put("/prompts/{prompt_id}", response_model=SystemPrompt)
 def update_prompt(prompt_id: int, prompt: SystemPrompt):
@@ -147,6 +156,7 @@ def update_prompt(prompt_id: int, prompt: SystemPrompt):
     if not prompt_store.update_prompt(prompt_id, prompt):
         raise HTTPException(status_code=404, detail="Prompt not found")
     return prompt
+
 
 @router.delete("/prompts/{prompt_id}")
 def delete_prompt(prompt_id: int):

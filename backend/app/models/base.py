@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
-from typing import AsyncGenerator, Dict, Any
+from typing import AsyncGenerator, Dict
+
 
 class BaseModelProvider(ABC):
     """An abstract base class for all model providers.
 
     This class defines the interface for all model providers.
     """
-    
+
     @abstractmethod
     async def generate(
         self,

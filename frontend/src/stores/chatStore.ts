@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { ChatMessage } from '../types/chat';
-import { api, type ChatRequest, type Model } from '../services/api';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { ChatMessage } from "../types/chat";
+import { api, type ChatRequest, type Model } from "../services/api";
 
 /**
  * An interface for the chat settings.
@@ -22,21 +22,21 @@ interface ChatStore {
   messages: ChatMessage[];
   currentStreamingMessage: string;
   isStreaming: boolean;
-  
+
   // Settings
   settings: ChatSettings;
   availableModels: Model[];
-  
+
   // UI State
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   addMessage: (msg: ChatMessage) => void;
   updateStreamingMessage: (content: string) => void;
   startStreaming: () => void;
   stopStreaming: () => void;
-  sendMessage: (content: string, attachments?: any[]) => Promise<void>;
+  sendMessage: (content: string, attachments?: File[]) => Promise<void>;
   updateSettings: (settings: Partial<ChatSettings>) => void;
   loadModels: () => Promise<void>;
   clearMessages: () => void;
@@ -44,71 +44,71 @@ interface ChatStore {
 }
 
 const defaultSettings: ChatSettings = {
-  provider: 'openai',
-  model: 'gpt-3.5-turbo',
+  provider: "openai",
+  model: "gpt-3.5-turbo",
   temperature: 0.7,
   maxTokens: 4096,
   streamingEnabled: true,
 };
 
-export const useChatStore = create<ChatStore>()()
-  (persist(
+export const useChatStore = create<ChatStore>()()(
+  persist(
     (set, get) => ({
       // State
       messages: [],
-      currentStreamingMessage: '',
+      currentStreamingMessage: "",
       isStreaming: false,
       settings: defaultSettings,
       availableModels: [],
       isLoading: false,
       error: null,
-      
+
       // Actions
       addMessage: (msg) => {
-        set(state => ({ 
+        set((state) => ({
           messages: [...state.messages, msg],
-          error: null 
+          error: null,
         }));
       },
-      
+
       updateStreamingMessage: (content) => {
         set({ currentStreamingMessage: content });
       },
-      
+
       startStreaming: () => {
-        set({ isStreaming: true, currentStreamingMessage: '', error: null });
+        set({ isStreaming: true, currentStreamingMessage: "", error: null });
       },
-      
+
       stopStreaming: () => {
         const { currentStreamingMessage } = get();
         if (currentStreamingMessage) {
           const assistantMessage: ChatMessage = {
             id: Date.now().toString(),
-            role: 'assistant',
+            role: "assistant",
             content: currentStreamingMessage,
             metadata: {
               model: get().settings.model,
               timestamp: Date.now(),
-              tokens: currentStreamingMessage.split(' ').length,
+              tokens: currentStreamingMessage.split(" ").length,
             },
           };
-          set(state => ({ 
+          set((state) => ({
             messages: [...state.messages, assistantMessage],
             isStreaming: false,
-            currentStreamingMessage: '',
+            currentStreamingMessage: "",
           }));
         } else {
-          set({ isStreaming: false, currentStreamingMessage: '' });
+          set({ isStreaming: false, currentStreamingMessage: "" });
         }
       },
-      
-      sendMessage: async (content: string, attachments?: any[]) => {
+
+      sendMessage: async (content: string, attachments?: File[]) => {
         const { settings, messages } = get();
-        
+
         // Add user message
         const userMessage: ChatMessage = {
           id: Date.now().toString(),
-          role: 'user',
+          role: "user",
           content,
           attachments,
           metadata: {
@@ -116,19 +116,19 @@ export const useChatStore = create<ChatStore>()()
             timestamp: Date.now(),
           },
         };
-        
-        set(state => ({ 
+
+        set((state) => ({
           messages: [...state.messages, userMessage],
           isLoading: true,
-          error: null 
+          error: null,
         }));
-        
+
         try {
-          const chatMessages = [...messages, userMessage].map(msg => ({
+          const chatMessages = [...messages, userMessage].map((msg) => ({
             role: msg.role,
             content: msg.content,
           }));
-          
+
           const request: ChatRequest = {
             messages: chatMessages,
             model: settings.model,
@@ -137,24 +137,24 @@ export const useChatStore = create<ChatStore>()()
             provider: settings.provider,
             stream: settings.streamingEnabled,
           };
-          
+
           if (settings.streamingEnabled) {
             get().startStreaming();
             set({ isLoading: false });
-            
+
             await api.sendMessageStream(request, (chunk) => {
-              set(state => ({ 
-                currentStreamingMessage: state.currentStreamingMessage + chunk 
+              set((state) => ({
+                currentStreamingMessage: state.currentStreamingMessage + chunk,
               }));
             });
-            
+
             get().stopStreaming();
           } else {
             const response = await api.sendMessage(request);
-            
+
             const assistantMessage: ChatMessage = {
               id: (Date.now() + 1).toString(),
-              role: 'assistant',
+              role: "assistant",
               content: response.content,
               metadata: {
                 model: response.model,
@@ -162,49 +162,50 @@ export const useChatStore = create<ChatStore>()()
                 tokens: response.metadata.tokens,
               },
             };
-            
-            set(state => ({ 
+
+            set((state) => ({
               messages: [...state.messages, assistantMessage],
-              isLoading: false 
+              isLoading: false,
             }));
           }
         } catch (error) {
-          set({ 
-            isLoading: false, 
+          set({
+            isLoading: false,
             isStreaming: false,
-            error: error instanceof Error ? error.message : 'Unknown error' 
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       },
-      
+
       updateSettings: (newSettings) => {
-        set(state => ({ 
-          settings: { ...state.settings, ...newSettings } 
+        set((state) => ({
+          settings: { ...state.settings, ...newSettings },
         }));
       },
-      
+
       loadModels: async () => {
         try {
           const models = await api.getModels();
           set({ availableModels: models });
         } catch (error) {
-          console.error('Failed to load models:', error);
+          console.error("Failed to load models:", error);
         }
       },
-      
+
       clearMessages: () => {
         set({ messages: [], error: null });
       },
-      
+
       setError: (error) => {
         set({ error });
       },
     }),
     {
-      name: 'mgdi-chat-store',
-      partialize: (state) => ({ 
+      name: "mgdi-chat-store",
+      partialize: (state) => ({
         messages: state.messages,
-        settings: state.settings 
+        settings: state.settings,
       }),
-    }
-  ));
+    },
+  ),
+);

@@ -1,12 +1,12 @@
 :root {
-  --primary: #0066CC;
-  --surface: #1A1A1A;
-  --surface-elevated: #2A2A2A;
-  --text-primary: #FFFFFF;
-  --text-secondary: #B0B0B0;
-  --accent: #00D4FF;
-  --error: #FF4444;
-  --success: #00C853;
+  --primary: #0066cc;
+  --surface: #1a1a1a;
+  --surface-elevated: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --accent: #00d4ff;
+  --error: #ff4444;
+  --success: #00c853;
 }
 
 body {

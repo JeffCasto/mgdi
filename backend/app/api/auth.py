@@ -2,7 +2,8 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.post('/login')
+
+@router.post("/login")
 def login():
     """Logs in a user.
 
@@ -11,4 +12,4 @@ def login():
     Returns:
         A dictionary with a message indicating that the login endpoint was called.
     """
-    return {'message': 'Login endpoint'}
+    return {"message": "Login endpoint"}

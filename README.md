@@ -84,4 +84,26 @@ From there, you can:
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request if you have any ideas for improving the application.
+Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+
+## Specifications and Reviews
+
+This project follows a structured development process. Specifications for new features can be found in the `SPEC/` directory, and reviews of pull requests can be found in the `REVIEWS/` directory.
+
+| Artifact | Link |
+|---|---|
+| **Specifications** | [SPEC/](SPEC/) |
+| **Reviews** | [REVIEWS/](REVIEWS/) |
+
+### Latest Feature: Image Analysis
+
+This feature allows users to upload an image and ask questions about it. See the [full specification](SPEC/feature_latest.md) for more details.
+
+**Acceptance Criteria:**
+
+- [ ] The user can upload an image file (JPEG, PNG, GIF).
+- [ ] The uploaded image is displayed in the chat window.
+- [ ] The user can type a question about the image in the message composer.
+- [ ] The user's question and the image are sent to the backend.
+- [ ] The backend sends the image and question to a multimodal AI model.
+- [ ] The AI model's response is displayed in the chat window.

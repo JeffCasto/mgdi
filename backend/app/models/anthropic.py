@@ -1,7 +1,8 @@
-from typing import AsyncGenerator, Dict, Any
+from typing import AsyncGenerator, Dict
 import anthropic
 from ..config import config
 from .base import BaseModelProvider
+
 
 class AnthropicProvider(BaseModelProvider):
     """A provider for the Anthropic API.
@@ -9,6 +10,7 @@ class AnthropicProvider(BaseModelProvider):
     This class provides methods for generating text and getting available models
     from the Anthropic API.
     """
+
     def __init__(self):
         """Initializes the Anthropic provider.
 
@@ -18,15 +20,15 @@ class AnthropicProvider(BaseModelProvider):
         if not config.ANTHROPIC_API_KEY:
             raise ValueError("ANTHROPIC_API_KEY is required")
         self.client = anthropic.AsyncAnthropic(api_key=config.ANTHROPIC_API_KEY)
-    
+
     async def generate(
-        self, 
-        messages: list[Dict[str, str]], 
+        self,
+        messages: list[Dict[str, str]],
         model: str = "claude-3-haiku-20240307",
         max_tokens: int = 4096,
         temperature: float = 0.7,
         stream: bool = False,
-        **kwargs
+        **kwargs,
     ) -> str | AsyncGenerator[str, None]:
         """Generates text using the Anthropic API.
 
@@ -48,9 +50,13 @@ class AnthropicProvider(BaseModelProvider):
             # Convert messages to Anthropic format
             system_messages = [m for m in messages if m["role"] == "system"]
             user_messages = [m for m in messages if m["role"] != "system"]
-            
-            system_prompt = "\n".join([m["content"] for m in system_messages]) if system_messages else None
-            
+
+            system_prompt = (
+                "\n".join([m["content"] for m in system_messages])
+                if system_messages
+                else None
+            )
+
             response = await self.client.messages.create(
                 model=model,
                 max_tokens=max_tokens,
@@ -58,18 +64,20 @@ class AnthropicProvider(BaseModelProvider):
                 system=system_prompt,
                 messages=user_messages,
                 stream=stream,
-                **kwargs
+                **kwargs,
             )
-            
+
             if stream:
                 return self._stream_response(response)
             else:
                 return response.content[0].text
-                
+
         except Exception as e:
             raise Exception(f"Anthropic API error: {str(e)}")
-    
-    async def _stream_response(self, response: AsyncGenerator) -> AsyncGenerator[str, None]:
+
+    async def _stream_response(
+        self, response: AsyncGenerator
+    ) -> AsyncGenerator[str, None]:
         """Streams response chunks from the Anthropic API.
 
         Args:
@@ -90,6 +98,6 @@ class AnthropicProvider(BaseModelProvider):
         """
         return [
             "claude-3-opus-20240229",
-            "claude-3-sonnet-20240229", 
-            "claude-3-haiku-20240307"
+            "claude-3-sonnet-20240229",
+            "claude-3-haiku-20240307",
         ]

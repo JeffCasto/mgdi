@@ -2,7 +2,8 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.post('/')
+
+@router.post("/")
 def plugin_endpoint():
     """Plugin endpoint.
 
@@ -11,4 +12,4 @@ def plugin_endpoint():
     Returns:
         A dictionary with a message indicating that the plugin endpoint was called.
     """
-    return {'message': 'Plugin endpoint'}
+    return {"message": "Plugin endpoint"}

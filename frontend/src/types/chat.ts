@@ -3,7 +3,7 @@
  */
 export interface Attachment {
   id: string;
-  type: 'image' | 'audio' | 'file';
+  type: "image" | "audio" | "file";
   url: string;
 }
 
@@ -12,7 +12,7 @@ export interface Attachment {
  */
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   attachments?: Attachment[];
   metadata: {

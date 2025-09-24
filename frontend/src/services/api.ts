@@ -1,6 +1,6 @@
-import type { ChatMessage } from '../types/chat';
+import type { ChatMessage } from "../types/chat";
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = "http://localhost:8000/api";
 
 export interface ChatRequest {
   messages: ChatMessage[];
@@ -15,7 +15,7 @@ export interface ChatResponse {
   content: string;
   model: string;
   provider: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export interface Provider {
@@ -45,9 +45,9 @@ class ApiService {
    */
   async sendMessage(request: ChatRequest): Promise<ChatResponse> {
     const response = await fetch(`${API_BASE}/chat/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(request),
     });
@@ -67,12 +67,12 @@ class ApiService {
    */
   async sendMessageStream(
     request: ChatRequest,
-    onChunk: (chunk: string) => void
+    onChunk: (chunk: string) => void,
   ): Promise<void> {
     const response = await fetch(`${API_BASE}/chat/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ ...request, stream: true }),
     });
@@ -82,10 +82,10 @@ class ApiService {
     }
 
     const reader = response.body?.getReader();
-    if (!reader) throw new Error('No response body');
+    if (!reader) throw new Error("No response body");
 
     const decoder = new TextDecoder();
-    let buffer = '';
+    let buffer = "";
 
     try {
       while (true) {
@@ -93,13 +93,13 @@ class ApiService {
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
 
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
+          if (line.startsWith("data: ")) {
             const data = line.slice(6);
-            if (data === '[DONE]') return;
+            if (data === "[DONE]") return;
             onChunk(data);
           }
         }
@@ -143,7 +143,7 @@ class ApiService {
    * @returns An object with the health status and version of the API.
    */
   async healthCheck(): Promise<{ status: string; version: string }> {
-    const response = await fetch(`${API_BASE.replace('/api', '')}/health`);
+    const response = await fetch(`${API_BASE.replace("/api", "")}/health`);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${await response.text()}`);
     }

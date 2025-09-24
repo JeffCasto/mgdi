@@ -4,6 +4,7 @@ This is a stub for a plugin that will eventually be able to interpret code
 and return the results.
 """
 
+
 def interpret_code(code: str) -> dict:
     """Interprets a string of code and returns the results.
 

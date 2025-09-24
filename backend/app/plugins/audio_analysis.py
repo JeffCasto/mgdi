@@ -4,6 +4,7 @@ This is a stub for a plugin that will eventually be able to analyze audio
 files and extract information from them.
 """
 
+
 def analyze_audio(file_path: str) -> dict:
     """Analyzes an audio file and returns a dictionary of information.
 
